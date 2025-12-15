@@ -1,0 +1,12 @@
+This is a simple dashboard for investigating personal radiation dose monitoring results issued by ARPANSA.
+
+To use this, you will need to export the results from your area into a csv file.
+This can be exported from the ARPANSA web portal.
+Ideally, you should include all centres in the export.
+
+You should also add names for your Centres, which can be found in the ARPANSA webportal.
+These settings are adjusted in the 'centre_number_map.yaml' settings file.
+A number of the role descriptions/numbers have been included in 'occupation_map.yaml', but your site may use different roles.
+Without adding these, the results may be a bit inscrutable.
+
+The csv file MUST be named 'exp_data.csv' and it must be kept in the same directory as the dashboard.
