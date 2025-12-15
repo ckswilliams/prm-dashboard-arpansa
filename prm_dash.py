@@ -14,6 +14,8 @@ import plotly.express as px
 from dash import dash_table
 
 from dose_report import plot_individual_figure, make_subtables, load_arpansa_dose_monitoring_csv
+
+
 #%%
 # Load data
 df= load_arpansa_dose_monitoring_csv('exp_data.csv')
@@ -120,15 +122,4 @@ def prepare_presentation_table(wearer_df):
 
 if __name__ == '__main__':
     app.run(debug=True, port=8050)
-
-
-
-
-
-
-
-
-
-
-
 

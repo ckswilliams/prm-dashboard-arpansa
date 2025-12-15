@@ -19,9 +19,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
-
-
-
 #%% Load in all the centre numbers. .
 
 #Load from separate files
@@ -44,7 +41,9 @@ with open(HOME_DIR / "occupation_map.yaml", "r", encoding="utf-8") as f:
 #%% debug and test
 if __name__ == '__main__':
     import os
-    os.chdir(r'C:\Users\chris williams\OneDrive - ACT Government\code\prm_dashboard')
+    import pathlib
+    pathlib.Path(__file__).parent
+    os.chdir(r'pathlib.Path(__file__).parent')
     df = load_arpansa_dose_monitoring_csv('exp_data.csv')
     
 #%%
@@ -76,7 +75,8 @@ def load_arpansa_dose_monitoring_csv(fn):
     return df
 
 
-#%%    
+
+#%% area figures
 
 def make_area_figure(df, centres=None, occupations=None, separate_centres = True, separate_occupations = True, has_dob=True):
     
@@ -100,22 +100,17 @@ def make_area_figure(df, centres=None, occupations=None, separate_centres = True
     
     cdf.PhotonHp10 = cdf.PhotonHp10.fillna(50)
     l = cdf.groupby(groupers).agg(
-        #statistical_mean = ('PhotonHp10', lambda x: estimate_lognormal_mean_and_sigma(x,50)),
+        #statistical_mean = ('PhotonHp10', lambda x: estimate_lognormal_mean_and_sigma(x,50)), #TOO computationally heavy to do for every quarter for every sub group, and also very innaccurate for small groups.
         mean = ("PhotonHp10",'mean'),
         max = ('PhotonHp10', 'max'),
         total_wearers=('PhotonHp10','count')
         )
-    #l['statistical_mean'] = l['statistical_mean'].str[0]
-    
-    #cdf.PhotonHp10 = cdf.PhotonHp10.fillna(50)
-    #l['conservative_mean'] = cdf.groupby(groupers).PhotonHp10.mean()
-    #l['mean'] = l.loc[:,['conservative_mean','statistical_mean']].min(axis=1)
+
     l = l.reset_index()
     
     return quarterly_overlay(l, quarter_col='quarter',category_col=category_col, y1_col='mean', y2_col='max',
                       title='PRM group results')
     
-
 
 
 #%% individual figures
@@ -180,10 +175,6 @@ def plot_individual_figure(wdf, cdf, adf):
     return fig
     
 
-
-
-
-
 #%% Overkill approach for estimating population mean for a truncated, skewed, normal distrubtion.
 
 
@@ -241,9 +232,6 @@ def estimate_lognormal_mean_and_sigma(values, threshold):
 
 #%%
 
-import pandas as pd
-import plotly.graph_objects as go
-
 def quarterly_overlay(
     agg: pd.DataFrame,
     quarter_col='quarter',
@@ -296,7 +284,5 @@ def quarterly_overlay(
     fig.data[1].marker.line.color = '#ff7f0e'
 
     return fig
-
-
 
 
