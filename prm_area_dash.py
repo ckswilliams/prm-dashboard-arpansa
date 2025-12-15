@@ -14,7 +14,7 @@ import plotly.express as px
 from dose_report import make_area_figure, load_arpansa_dose_monitoring_csv 
 
 # Load data
-df= load_arpansa_dose_monitoring_csv('exp_data.csv')
+df = load_arpansa_dose_monitoring_csv('exp_data.csv')
 
 # Create the Dash app
 app = dash.Dash(__name__, requests_pathname_prefix='/prmarea/', routes_pathname_prefix='/prmarea/', title='CHS PRM Area Results')
@@ -59,6 +59,15 @@ app.layout = html.Div([
             id="options_checkbox",
             inline=True # Display options horizontally
             ),
+        dcc.RadioItems(
+            options=[
+            {"label": "Exclude missing DOB (i.e. area monitoring)", "value": "exclude_area"},
+            {"label": "Include missing DOB (include all)", "value": "permissive"}
+            ],
+            value="separate_occupations", # Default selected value(s)
+            id="dob_radio",
+            inline=True # Display options horizontally
+            ),
         ],
         id='dropdown-container',
     ),
@@ -82,18 +91,18 @@ def update_occupation_choices(values):
 # Callback to update plot
 @app.callback(
     Output('plot', 'figure'),
-    [Input('centre_dropdown', 'value'), Input('occupation_dropdown', 'value'), Input('date_dropdown','value'), Input('options_checkbox','value')]
+    [Input('centre_dropdown', 'value'), Input('occupation_dropdown', 'value'), Input('date_dropdown','value'), Input('options_checkbox','value'), Input('dob_radio','value')]
 )
-def update_plot(centre_values, occupation_values, date_value, options):
+def update_plot(centre_values, occupation_values, date_value, options, dob_choice):
     separate_centres = 'separate_centres' == options
     separate_occupations = 'separate_occupations' == options
-    tdf = df.loc[df.quarter >= date_value]
+    tdf = df.copy()
+    if dob_choice=='exclude_area':
+        tdf = tdf.loc[tdf.DOB.notna()]
+    tdf = tdf.loc[tdf.quarter >= date_value]
     fig = make_area_figure(tdf, centres = centre_values, occupations = occupation_values, separate_centres=separate_centres, separate_occupations=separate_occupations)
     fig.update_layout(title=f"Area PRM results")
     return fig
-
-
-
 
 
 
