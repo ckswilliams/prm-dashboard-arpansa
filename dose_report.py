@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
 
 def load_arpansa_dose_monitoring_csv(fn):
-    df= pd.read_csv(fn, index_col=False)
+    df= pd.read_csv(fn, index_col=False, engine='python', on_bad_lines='skip')
     df.Wearer = df.Wearer.str.strip()
     df.loc[df.PhotonHp10.isna(),'PhotonHp10'] = df.loc[df.PhotonHp10.isna(),'PhotonHp07'] # probably unnecessary, but if hp07 is available but hp10 isn't, use hp07 anywya
     df.WearingStopDate = pd.to_datetime(df.WearingStopDate, dayfirst=True)
